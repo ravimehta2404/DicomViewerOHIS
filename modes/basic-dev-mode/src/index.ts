@@ -61,8 +61,8 @@ function modeFactory({ modeConfiguration }) {
       const tools = {
         active: [
           {
-            toolName: toolNames.WindowLevel,
-            bindings: [{ mouseButton: Enums.MouseBindings.Primary }],
+            toolName: toolNames.StackScroll,
+            bindings: [{ mouseButton: Enums.MouseBindings.Wheel }, { numTouchPoints: 3 }],
           },
           {
             toolName: toolNames.Pan,
@@ -73,8 +73,8 @@ function modeFactory({ modeConfiguration }) {
             bindings: [{ mouseButton: Enums.MouseBindings.Secondary }, { numTouchPoints: 2 }],
           },
           {
-            toolName: toolNames.StackScroll,
-            bindings: [{ mouseButton: Enums.MouseBindings.Wheel }, { numTouchPoints: 3 }],
+            toolName: toolNames.WindowLevel,
+            bindings: [{ mouseButton: Enums.MouseBindings.Primary }],
           },
         ],
         passive: [

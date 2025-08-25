@@ -89,7 +89,7 @@ jobs:
           name: 'Perform the versioning before build'
           command: bun ./version.mjs
       - run:
-          name: 'Build the OHIF Viewer'
+          name: 'Build the RADFLARE Viewer'
           command: bun run build
           no_output_timeout: 45m
       - run:
@@ -355,7 +355,7 @@ jobs:
           install-command: yarn install --no-save
       - cypress/run-tests:
           cypress-command: |
-            npx wait-on@latest http://localhost:3000 && cd platform/app && npx cypress run --record --parallel
+            npx wait-on@latest http://localhost:3001 && cd platform/app && npx cypress run --record --parallel
           start-command: yarn run test:data && yarn run test:e2e:serve
 
   DOCKER_MULTIARCH_MANIFEST:

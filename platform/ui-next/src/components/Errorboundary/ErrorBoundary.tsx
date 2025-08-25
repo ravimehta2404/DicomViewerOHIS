@@ -225,7 +225,7 @@ const DefaultFallback = ({
 
         {/* Footer */}
         <div className="flex items-center justify-end p-6 pt-2">
-          <Button
+          {/* <Button
             variant="link"
             className="text-primary p-0"
             onClick={() =>
@@ -236,7 +236,7 @@ const DefaultFallback = ({
             }
           >
             Report Issue
-          </Button>
+          </Button> */}
         </div>
       </DialogContent>
     </Dialog>

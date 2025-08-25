@@ -58,6 +58,6 @@ if [ -n "$CLIENT_ID" ] || [ -n "$HEALTHCARE_API_ENDPOINT" ]
 	  cp /usr/share/nginx/html/google.js /usr/share/nginx/html/app-config.js
 fi
 
-echo "Starting Nginx to serve the OHIF Viewer on ${PUBLIC_URL}"
+echo "Starting Nginx to serve the RADFLARE VIEWER on ${PUBLIC_URL}"
 
 exec "$@"
