@@ -11,7 +11,7 @@
 }
 
 .shepherd-element {
-  @apply !bg-popover !max-w-[260px];
+  @apply !bg-popover !min-h-[180px] !min-w-[300px] !max-w-[320px];
 }
 
 .shepherd-text {

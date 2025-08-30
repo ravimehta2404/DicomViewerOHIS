@@ -158,6 +158,7 @@ scp -i /path/to/key.pem /path/to/docs/orthanc_plugin.py ubuntu@3.108.64.88:/opt/
 
 # 6) Build and run
 cd /opt/orthanc-docker
+# sudo docker compose down
 docker compose up -d --build
 docker compose ps
 docker compose logs -f orthanc | sed -n '1,120p'
@@ -223,9 +224,11 @@ sudo podman ps --format '{{.Names}}\t{{.Ports}}' | grep 8042 || true
 
 
 
+
+
 ## OHIF VIEWR setup
 # on Local machine
-cd /Users/ravimehta/Documents/Workspace/study/pacs/dicom_viewer_ohis/platform/app && PUBLIC_URL=/ohif/ APP_CONFIG=config/tele.js yarn build:viewer
+cd /Users/ravimehta/Documents/Workspace/study/pacs/dicom_viewer_ohis/platform/app && PUBLIC_URL=/dicom/ APP_CONFIG=config/tele.js yarn build:viewer
 
 # On EC2:
 sudo chown -R ubuntu:ubuntu /opt/ohif-nginx/html/ohif
@@ -233,6 +236,7 @@ sudo chmod -R u+rwX,go+rX /opt/ohif-nginx/html/ohif
 
 # on Local machine
 ssh -i /Users/ravimehta/.ssh/radflare-dicom-server.pem ubuntu@65.1.107.198 'sudo mkdir -p /opt/ohif-nginx/html/ohif'
+
 rsync -avz -e "ssh -i /Users/ravimehta/.ssh/radflare-dicom-server.pem" /Users/ravimehta/Documents/Workspace/study/pacs/dicom_viewer_ohis/platform/app/dist/ ubuntu@65.1.107.198:/opt/ohif-nginx/html/ohif/
 
 
@@ -270,6 +274,78 @@ server {
   location = /health { return 200 'ok'; add_header Content-Type text/plain; }
 }
 EOF
+
 sudo ln -sf /etc/nginx/sites-available/ohif.conf /etc/nginx/sites-enabled/ohif.conf
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t && sudo systemctl restart nginx
+
+
+
+
+
+
+## performance improvements:
+
+sudo tee /etc/nginx/sites-available/ohif.conf > /dev/null <<'EOF'
+server {
+  listen 80 default_server;
+  server_name _;
+
+  # MIME types (so css/js get correct Content-Type)
+  include /etc/nginx/mime.types;
+  default_type application/octet-stream;
+
+  # 1) Redirect asset URLs that wrongly end with "/" to the file path
+  location ~* ^/dicom/(.+\.(?:js|css|map|woff2?|png|jpg|svg|ico|wasm))/+$ {
+    return 301 /dicom/$1;
+  }
+
+  # 2) Serve static assets directly (no SPA fallback here)
+  location ~* ^/dicom/(.+\.(?:js|css|map|woff2?|png|jpg|svg|ico|wasm))$ {
+    alias /opt/ohif-nginx/html/ohif/$1;
+    expires 30d;
+    add_header Cache-Control "public, max-age=2592000, immutable";
+    access_log off;
+  }
+
+  # 3) OHIF SPA (fallback only for non-asset paths)
+  location /dicom/ {
+    alias /opt/ohif-nginx/html/ohif/;
+    try_files $uri $uri/ /dicom/index.html;
+  }
+
+  # 4) Proxy DICOMweb to Orthanc (safe streaming tweaks only)
+  location /dicom-web/ {
+    proxy_pass http://127.0.0.1:8042/dicom-web/;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header Connection "";
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+    # Stream frames; don't buffer big pixel responses
+    proxy_request_buffering off;
+    proxy_buffering off;
+    proxy_read_timeout 300s;
+    proxy_send_timeout 300s;
+    gzip off;
+  }
+
+  # 5) Proxy WADO-URI (optional)
+  location /wado {
+    proxy_pass http://127.0.0.1:8042/wado;
+    proxy_set_header Host $host;
+    proxy_request_buffering off;
+    proxy_buffering off;
+    proxy_read_timeout 300s;
+    proxy_send_timeout 300s;
+    gzip off;
+  }
+
+  location = /health { return 200 'ok'; add_header Content-Type text/plain; }
+}
+EOF
+
+
+
+sudo nginx -t && sudo systemctl reload nginx

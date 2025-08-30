@@ -1,0 +1,121 @@
+server {
+  listen 443 ssl http2; # managed by Certbot
+  server_name dicom.radflare.com;
+
+    ssl_certificate /etc/letsencrypt/live/dicom.radflare.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/dicom.radflare.com/privkey.pem; # managed by Certb>
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+  # MIME types (so css/js get correct Content-Type)
+  include /etc/nginx/mime.types;
+  default_type application/octet-stream;
+
+  # 1) Redirect asset URLs that wrongly end with "/" to the file path
+  location ~* ^/dicom/(.+\.(?:js|css|map|woff2?|png|jpg|svg|ico|wasm))/+$ {
+    return 301 /dicom/$1;
+  }
+
+  # 2) Serve static assets directly (no SPA fallback here)
+  location ~* ^/dicom/(.+\.(?:js|css|map|woff2?|png|jpg|svg|ico|wasm))$ {
+    alias /opt/ohif-nginx/html/ohif/$1;
+    expires 30d;
+    add_header Cache-Control "public, max-age=2592000, immutable";
+
+  add_header Cross-Origin-Opener-Policy same-origin always;
+  add_header Cross-Origin-Embedder-Policy require-corp always;
+  add_header Cross-Origin-Resource-Policy same-origin always;
+    access_log off;
+  }
+
+  # 2a) Serve /assets/* even if requested without the /dicom/ prefix
+  location ^~ /assets/ {
+    alias /opt/ohif-nginx/html/ohif/assets/;
+    expires 30d;
+    add_header Cache-Control "public, max-age=2592000, immutable";
+
+add_header Cross-Origin-Opener-Policy same-origin always;
+  add_header Cross-Origin-Embedder-Policy require-corp always;
+  add_header Cross-Origin-Resource-Policy same-origin always;
+
+    access_log off;
+  }
+
+  # 2b) Serve root-level fonts/icons accidentally referenced at /
+  location ~* ^/(.+\.(?:woff2?|png|jpg|svg|ico))$ {
+    alias /opt/ohif-nginx/html/ohif/$1;
+    expires 30d;
+    add_header Cache-Control "public, max-age=2592000, immutable";
+
+  add_header Cross-Origin-Opener-Policy same-origin always;
+  add_header Cross-Origin-Embedder-Policy require-corp always;
+  add_header Cross-Origin-Resource-Policy same-origin always;
+
+    access_log off;
+  }
+
+
+  # 3) OHIF SPA (fallback only for non-asset paths)
+  location /dicom/ {
+    alias /opt/ohif-nginx/html/ohif/;
+    try_files $uri $uri/ /dicom/index.html;
+
+    # COOP/COEP: unlock multi-threaded WASM decode (HTTPS only)
+    add_header Cross-Origin-Opener-Policy same-origin always;
+    add_header Cross-Origin-Embedder-Policy require-corp always;
+  }
+
+  # (Optional but recommended) Make index.html no-store + carry COOP/COEP
+  location = /dicom/index.html {
+    alias /opt/ohif-nginx/html/ohif/index.html;
+    add_header Cache-Control "no-store" always;
+    add_header Cross-Origin-Opener-Policy same-origin always;
+    add_header Cross-Origin-Embedder-Policy require-corp always;
+  }
+
+  # 4) Proxy DICOMweb to Orthanc (safe streaming tweaks only)
+  location /dicom-web/ {
+    proxy_pass http://127.0.0.1:8042/dicom-web/;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header Connection "";
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Authorization "Basic YWRtaW46T3J0aGFuY1dlYl9SQURfOTg3Iw==";
+
+    # Stream frames; don't buffer big pixel responses
+    proxy_request_buffering off;
+    proxy_buffering off;
+    proxy_read_timeout 300s;
+    proxy_send_timeout 300s;
+    gzip off;
+    # Same-origin embedding under COEP
+    add_header Cross-Origin-Resource-Policy same-origin always;
+  }
+
+  # 5) Proxy WADO-URI (optional)
+  location /wado {
+    proxy_pass http://127.0.0.1:8042/wado;
+    proxy_set_header Host $host;
+    proxy_request_buffering off;
+    proxy_buffering off;
+    proxy_read_timeout 300s;
+    proxy_send_timeout 300s;
+    gzip off;
+  }
+
+  location = /health { return 200 'ok'; add_header Content-Type text/plain; }
+
+}
+server {
+    if ($host = dicom.radflare.com) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+  listen 80 default_server;
+  server_name dicom.radflare.com;
+    return 404; # managed by Certbot
+
+
+}

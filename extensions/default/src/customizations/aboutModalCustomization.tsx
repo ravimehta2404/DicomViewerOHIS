@@ -10,6 +10,8 @@ function AboutModalDefault() {
 
   const [main, beta] = versionNumber.split('-');
 
+  return <></>;
+
   return (
     <AboutModal className="w-[400px]">
       <AboutModal.ProductName>OHIF Viewer</AboutModal.ProductName>

@@ -134,10 +134,10 @@ module.exports = (env, argv) => {
           PUBLIC_URL: PUBLIC_URL,
         },
       }),
-      // Generate a service worker for fast local loads
-      ...(IS_COVERAGE
-        ? []
-        : [
+      // Only generate a service worker for production builds;
+      // avoid heavy precache in development which delays first paint
+      ...(isProdBuild
+        ? [
             new InjectManifest({
               swDest: 'sw.js',
               swSrc: path.join(SRC_DIR, 'service-worker.js'),
@@ -146,7 +146,8 @@ module.exports = (env, argv) => {
               // Cache large files for the manifests to avoid warning messages
               maximumFileSizeToCacheInBytes: 1024 * 1024 * 50,
             }),
-          ]),
+          ]
+        : []),
     ],
     // https://webpack.js.org/configuration/dev-server/
     devServer: {
@@ -167,6 +168,9 @@ module.exports = (env, argv) => {
           changeOrigin: true,
           secure: false,
           logLevel: 'debug',
+          headers: {
+            Authorization: 'Basic ' + Buffer.from('admin:OrthancWeb_RAD_987#').toString('base64'),
+          },
         },
       ],
       static: [

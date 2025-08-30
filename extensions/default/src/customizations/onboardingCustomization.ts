@@ -202,6 +202,27 @@ export default {
               },
               secondary: true,
             },
+            {
+              text: 'Previous',
+              action() {
+                this.back();
+              },
+              secondary: true,
+              when: {
+                show() {
+                  // Hide on first step
+                  this.style.display =
+                    this.tour.currentStep.id === 'scroll' ? 'none' : 'inline-block';
+                },
+              },
+            },
+            {
+              text: 'Next',
+              action() {
+                this.next();
+              },
+              classes: 'btn-primary',
+            },
           ],
         },
       },

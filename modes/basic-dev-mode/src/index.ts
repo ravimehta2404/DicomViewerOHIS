@@ -1,12 +1,8 @@
 import toolbarButtons from './toolbarButtons';
-import { hotkeys } from '@ohif/core';
 import { id } from './id';
 import i18n from 'i18next';
 
-const configs = {
-  Length: {},
-  //
-};
+// Note: keep runtime simple; remove unused configs to avoid linter noise
 
 const ohif = {
   layout: '@ohif/extension-default.layoutTemplateModule.viewerLayout',
@@ -56,11 +52,13 @@ function modeFactory({ modeConfiguration }) {
         '@ohif/extension-cornerstone.utilityModule.tools'
       );
 
-      const { toolNames, Enums } = utilityModule.exports;
+      const { toolNames, Enums } = (utilityModule as any).exports;
 
       const tools = {
         active: [
           {
+            // toolName: toolNames.WindowLevel,
+            // bindings: [{ mouseButton: Enums.MouseBindings.Primary }],
             toolName: toolNames.StackScroll,
             bindings: [{ mouseButton: Enums.MouseBindings.Wheel }, { numTouchPoints: 3 }],
           },
@@ -73,6 +71,8 @@ function modeFactory({ modeConfiguration }) {
             bindings: [{ mouseButton: Enums.MouseBindings.Secondary }, { numTouchPoints: 2 }],
           },
           {
+            // toolName: toolNames.StackScroll,
+            // bindings: [{ mouseButton: Enums.MouseBindings.Wheel }, { numTouchPoints: 3 }],
             toolName: toolNames.WindowLevel,
             bindings: [{ mouseButton: Enums.MouseBindings.Primary }],
           },
@@ -142,10 +142,6 @@ function modeFactory({ modeConfiguration }) {
                 {
                   namespace: cs3d.viewport,
                   displaySetsToDisplay: [ohif.sopClassHandler],
-                },
-                {
-                  namespace: dicomvideo.viewport,
-                  displaySetsToDisplay: [dicomvideo.sopClassHandler],
                 },
                 {
                   namespace: dicompdf.viewport,
