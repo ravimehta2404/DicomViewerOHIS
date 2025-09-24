@@ -1,7 +1,8 @@
 /** @type {AppTypes.Config} */
 window.config = {
   // Local dev: use root base so /viewer works
-  routerBasename: '/dicom/',
+  // routerBasename: '/dicom/',
+  routerBasename: '/',
   showStudyList: false,
   defaultDataSourceName: 'dicomweb',
   // Improves perceived speed by prefetching nearby series/images
@@ -17,17 +18,19 @@ window.config = {
   allowMultiSelectExport: false,
   maxNumRequests: {
     // Prioritize interactive viewport requests
-    interaction: 8,
-    thumbnail: 4,
+    interaction: 4,
+    thumbnail: 2,
     // Keep prefetch low so it never starves interaction
-    prefetch: 2,
+    prefetch: 0,
   },
   // enableStudyLazyLoad: true,
-
   studyPrefetcher: {
-    enabled: true,
-    displaySetCount: 1,
+    enabled: false,
   },
+  // studyPrefetcher: {
+  //   enabled: true,
+  //   displaySetCount: 1,
+  // },
   // Load default & extra extensions for a fuller viewer experience
   extensions: [
     '@ohif/extension-default',
@@ -46,10 +49,28 @@ window.config = {
   ], // ← required
   // Use a real mode package so WorkList can call mode.isValidMode
   modes: ['@ohif/mode-basic-dev-mode'],
+  // modes: [
+  //   {
+  //     id: 'ViewerMode',
+  //     routes: [{ path: 'dicom', layoutTemplate: '@ohif/viewer' }],
+  //     defaultContext: ['VIEWER'],
+  //     toolbarButtons: [
+  //       'Zoom',
+  //       'Pan',
+  //       'Length',
+  //       'Angle',
+  //       'StackScroll',
+  //       'Crosshairs',
+  //       // add/reorder/remove here
+  //     ],
+  //   },
+  // ],
+  // hide "Investigational use only" dialog/banner
+  investigationalUseDialog: { option: 'never' },
   // Optional: increase in-memory cache if the workstation has RAM headroom
   cornerstone: {
     // useCPURendering: true, // fallback for 3D
-    cacheSizeInBytes: 512 * 1024 * 1024, // 512 MB
+    cacheSizeInBytes: 268435456, //256 * 1024 * 1024,   536870912, // 512 * 1024 * 1024
   },
   dataSources: [
     {
@@ -103,7 +124,7 @@ window.config = {
     }
   }
 
-  const cores = navigator.hardwareConcurrency || 2;
+  const cores = navigator.hardwareConcurrency || 4;
   const WEAK = !supportsWebGL2() || cores < 4;
 
   // Your full set (unchanged) for capable devices
@@ -130,13 +151,14 @@ window.config = {
   cfg.extensions = WEAK ? EXT_LEAN : EXT_FULL;
 
   // Workers/cache tuned by device
-  const workerTarget = Math.min(4, Math.max(2, cores - 1));
+  // const workerTarget = Math.min(4, Math.max(2, cores - 1));
+  const workerTarget = Math.min(3, Math.max(1, cores - 1));
   cfg.maxNumberOfWebWorkers = workerTarget;
   cfg.cornerstone = cfg.cornerstone || {};
 
   // IMPORTANT: keep GPU for capable devices so MPR works; use CPU only on weak
   cfg.cornerstone.useCPURendering = WEAK;
-  cfg.cornerstone.cacheSizeInBytes = WEAK ? 512 * 1024 * 1024 : 1024 * 1024 * 1024;
+  cfg.cornerstone.cacheSizeInBytes = WEAK ? 256 * 1024 * 1024 : 512 * 1024 * 1024;
 
   // Gentle prefetch for weak clients
   if (WEAK) {

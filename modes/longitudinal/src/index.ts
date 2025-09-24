@@ -93,6 +93,7 @@ function modeFactory({ modeConfiguration }) {
       toolbarService.register(toolbarButtons);
       toolbarService.updateSection(toolbarService.sections.primary, [
         'MeasurementTools',
+        'StackScroll',
         'Zoom',
         'Pan',
         'TrackballRotate',
