@@ -48,7 +48,7 @@ window.config = {
     '@ohif/extension-ultrasound-pleura-bline',
   ], // ← required
   // Use a real mode package so WorkList can call mode.isValidMode
-  modes: ['@ohif/mode-basic-dev-mode'],
+  modes: ['@ohif/mode-microscopy'],
   // modes: [
   //   {
   //     id: 'ViewerMode',

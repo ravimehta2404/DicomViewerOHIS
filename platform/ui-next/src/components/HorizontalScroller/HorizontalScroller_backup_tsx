@@ -1,0 +1,199 @@
+import React from 'react';
+import './embla.css';
+import useEmblaCarousel from 'embla-carousel-react';
+import { Icons, Button } from '../';
+
+type HorizontalScrollerProps = {
+  children: React.ReactNode;
+  scrollByPx?: number;
+  className?: string;
+};
+
+export function HorizontalScroller({
+  children,
+  scrollByPx = 200,
+  className,
+}: HorizontalScrollerProps) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    axis: 'x',
+    dragFree: true,
+    containScroll: false,
+    align: 'start',
+    watchDrag: true,
+    loop: false,
+    startIndex: 0,
+    slidesToScroll: 'auto',
+    speed: 10,
+  });
+
+  const [canScrollPrev, setCanScrollPrev] = React.useState(false);
+  const [canScrollNext, setCanScrollNext] = React.useState(false);
+
+  const updateScrollState = React.useCallback(() => {
+    if (!emblaApi) {
+      return;
+    }
+    setCanScrollPrev(emblaApi.canScrollPrev());
+    setCanScrollNext(emblaApi.canScrollNext());
+  }, [emblaApi]);
+
+  React.useEffect(() => {
+    if (!emblaApi) {
+      return;
+    }
+
+    updateScrollState();
+    emblaApi.on('select', updateScrollState);
+    emblaApi.on('reInit', updateScrollState);
+    emblaApi.on('scroll', updateScrollState);
+    emblaApi.on('resize', updateScrollState);
+
+    // Force initial state check after a brief delay to ensure proper initialization
+    const timeoutId = setTimeout(updateScrollState, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      emblaApi.off('select', updateScrollState);
+      emblaApi.off('reInit', updateScrollState);
+      emblaApi.off('scroll', updateScrollState);
+      emblaApi.off('resize', updateScrollState);
+    };
+  }, [emblaApi, updateScrollState]);
+
+  // Also listen for content changes and window resize
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (emblaApi) {
+        emblaApi.reInit();
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [emblaApi]);
+
+  const scrollByPixels = React.useCallback(
+    (pixels: number) => {
+      if (!emblaApi) {
+        return;
+      }
+
+      // Get current scroll progress (0-1)
+      const currentProgress = emblaApi.scrollProgress();
+      const scrollSnapList = emblaApi.scrollSnapList();
+
+      if (scrollSnapList.length === 0) {
+        return;
+      }
+
+      // Calculate target progress based on pixel movement
+      const containerWidth = emblaApi.containerNode().clientWidth;
+      const scrollableWidth =
+        emblaApi.scrollSnapList().length > 0
+          ? emblaApi.containerNode().scrollWidth - containerWidth
+          : 0;
+
+      if (scrollableWidth <= 0) {
+        return;
+      }
+
+      const pixelProgress = pixels / scrollableWidth;
+      const targetProgress = Math.max(0, Math.min(1, currentProgress + pixelProgress));
+
+      // Convert progress to snap index
+      const targetSnapIndex = Math.round(targetProgress * (scrollSnapList.length - 1));
+      emblaApi.scrollTo(targetSnapIndex);
+    },
+    [emblaApi]
+  );
+
+  const scrollBy = (direction: number) => {
+    scrollByPixels(direction * scrollByPx);
+  };
+
+  // Mouse wheel support with pixel-based scrolling
+  const handleWheel = React.useCallback(
+    (event: React.WheelEvent) => {
+      event.preventDefault();
+      if (!emblaApi) {
+        return;
+      }
+
+      const scrollDelta = event.deltaX !== 0 ? event.deltaX : event.deltaY;
+
+      // Use pixel-based scrolling for smooth wheel experience
+      if (Math.abs(scrollDelta) > 0) {
+        scrollByPixels(scrollDelta * 2); // Multiply for better sensitivity
+      }
+    },
+    [emblaApi, scrollByPixels]
+  );
+
+  return (
+    <div className={['relative w-full', className].filter(Boolean).join(' ')}>
+      <div
+        className="overflow-hidden"
+        ref={emblaRef}
+        onWheel={handleWheel}
+        style={{ cursor: 'grab' }}
+        onMouseDown={e => {
+          if (emblaApi) {
+            e.currentTarget.style.cursor = 'grabbing';
+          }
+        }}
+        onMouseUp={e => {
+          e.currentTarget.style.cursor = 'grab';
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.cursor = 'grab';
+        }}
+      >
+        <div className="embla__container flex items-center gap-1 whitespace-nowrap px-8 will-change-transform">
+          {/* Each child becomes a slide with auto width to support variable widths */}
+          {React.Children.map(children, (child, index) => (
+            <div
+              key={index}
+              className="embla__slide flex-shrink-0 flex-grow-0"
+              style={{ flexBasis: 'auto' }}
+            >
+              {child}
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Left scroll button with gradient fade */}
+      {canScrollPrev && (
+        <div className="pointer-events-none absolute left-0 top-0 z-20 flex h-full items-center">
+          <div className="from-background via-background/90 absolute left-0 h-full w-12 bg-gradient-to-r to-transparent"></div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="bg-background/90 border-border/30 text-primary hover:bg-primary-dark pointer-events-auto relative z-30 ml-1 border shadow-sm backdrop-blur-sm"
+            onClick={() => scrollBy(-1)}
+            title="Scroll left"
+          >
+            <Icons.ChevronLeft className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
+
+      {/* Right scroll button with gradient fade */}
+      {canScrollNext && (
+        <div className="pointer-events-none absolute right-0 top-0 z-20 flex h-full items-center">
+          <div className="from-background via-background/90 absolute right-0 h-full w-12 bg-gradient-to-l to-transparent"></div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="bg-background/90 border-border/30 text-primary hover:bg-primary-dark pointer-events-auto relative z-30 mr-1 border shadow-sm backdrop-blur-sm"
+            onClick={() => scrollBy(1)}
+            title="Scroll right"
+          >
+            <Icons.ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default HorizontalScroller;

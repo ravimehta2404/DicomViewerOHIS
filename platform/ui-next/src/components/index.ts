@@ -42,6 +42,7 @@ import { Switch } from './Switch';
 import { Checkbox } from './Checkbox';
 import { Slider } from './Slider';
 import { ScrollArea, ScrollBar } from './ScrollArea';
+import { HorizontalScroller } from './HorizontalScroller/HorizontalScroller';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './Accordion';
 import { Icons } from './Icons';
 import { SidePanel } from './SidePanel';
@@ -180,6 +181,7 @@ export {
   toggleVariants,
   Slider,
   ScrollArea,
+  HorizontalScroller,
   ToggleGroup,
   ToggleGroupItem,
   ScrollBar,
