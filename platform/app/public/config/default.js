@@ -48,7 +48,7 @@ window.config = {
     '@ohif/extension-ultrasound-pleura-bline',
   ], // ← required
   // Use a real mode package so WorkList can call mode.isValidMode
-  modes: ['@ohif/mode-microscopy'],
+  modes: ['@ohif/mode-basic-dev-mode', '@ohif/mode-longitudinal'],
   // modes: [
   //   {
   //     id: 'ViewerMode',
@@ -136,7 +136,7 @@ window.config = {
     '@ohif/extension-cornerstone-dicom-rt',
     '@ohif/extension-cornerstone-dicom-pmap',
     '@ohif/extension-cornerstone-dynamic-volume', // MPR/3D
-    '@ohif/extension-dicom-pdf',
+    // '@ohif/extension-dicom-pdf',
     '@ohif/extension-dicom-video',
     '@ohif/extension-dicom-microscopy',
     '@ohif/extension-measurement-tracking',

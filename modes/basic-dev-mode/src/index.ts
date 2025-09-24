@@ -95,13 +95,86 @@ function modeFactory({ modeConfiguration }) {
       toolGroupService.createToolGroupAndAddTools('default', tools);
 
       toolbarService.register(toolbarButtons);
+
+      // Primary toolbar ordering per requirements
       toolbarService.updateSection('primary', [
+        // Measurement category: two visible + dropdown
+        'Length',
+        'Angle',
         'MeasurementTools',
-        'Zoom',
-        'WindowLevel',
+
+        // Probe
+        'Probe',
+
+        // Stack Scroll default on (already active via bindings); include button as visible
+        'StackScroll',
+
+        // Zoom group (Zoom visible + Magnify in dropdown)
+        'ZoomGroup',
+
+        // Pan
         'Pan',
-        'Layout',
+
+        // Image Slice Sync
+        'ImageSliceSync',
+
+        // Reference Lines
+        'ReferenceLines',
+
+        // Crosshairs
+        'Crosshairs',
+
+        // Change View (reset/rotate/flip in dropdown)
         'MoreTools',
+
+        // Layout (we’ll keep layout visible; advanced presets can be added later)
+        'Layout',
+
+        // Window Level with Invert in dropdown
+        'WindowLevelGroup',
+
+        // 2D MPR orientation menu
+        'orientationMenu',
+
+        // 3D MPR with presets dropdown
+        'MPRGroup',
+
+        // Window Presets group
+        'WindowPreset',
+      ]);
+
+      // Measurement dropdown content
+      toolbarService.updateSection('MeasurementTools', [
+        'CobbAngle',
+        'Bidirectional',
+        'ArrowAnnotate',
+        'EllipticalROI',
+        'RectangleROI',
+        'CircleROI',
+        'PlanarFreehandROI',
+        'SplineROI',
+        'LivewireContour',
+      ]);
+
+      // Zoom dropdown
+      toolbarService.updateSection('ZoomGroup', ['Magnify']);
+
+      // Change View dropdown
+      toolbarService.updateSection('MoreTools', ['RotateRight', 'FlipHorizontal', 'Reset']);
+
+      // Window level dropdown
+      toolbarService.updateSection('WindowLevelGroup', ['WindowLevel', 'Invert']);
+
+      // 3D/MPR dropdown
+      toolbarService.updateSection('MPRGroup', ['MPR', 'AxialPrimary', 'Only3D']);
+
+      // Window presets dropdown
+      toolbarService.updateSection('WindowPreset', [
+        'Soft tissue',
+        'Lung',
+        'Liver',
+        'Bone',
+        'Brain',
       ]);
     },
     onModeExit: ({ servicesManager }: withAppTypes) => {

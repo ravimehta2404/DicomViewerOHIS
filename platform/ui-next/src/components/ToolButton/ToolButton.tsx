@@ -93,18 +93,22 @@ function ToolButton(props: ToolButtonProps) {
                 onInteraction?.({ itemId: id, commands });
               }
             }}
+            style={{ minWidth: 'auto', padding: '28px' }}
             variant="ghost"
             size="icon"
             aria-label={defaultTooltip}
             disabled={disabled}
             name={id}
           >
-            {children || (
-              <Icons.ByName
-                name={icon}
-                className={iconClassName || iconSizeClass}
-              />
-            )}
+            <div className="flex flex-col items-center leading-none">
+              {children || (
+                <Icons.ByName
+                  name={icon}
+                  className={iconClassName || iconSizeClass}
+                />
+              )}
+              {label && <span className="mt-0.5 text-[10px] leading-none">{label}</span>}
+            </div>
           </Button>
         </span>
       </TooltipTrigger>

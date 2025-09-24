@@ -1,0 +1,15 @@
+Sno,Category,Buttons Open,in Dropdown
+1,measurement,"Length, Angle, Eclipse","Angle, CobeAngle, Bidirectional, Annotation, Ellipse, Rectangle, Circle, Freehand ROI, Spline ROI, Livewire tool"
+2,,Probe,
+3,,Stack Scroll - (Default ON/Selected),
+4,,Zoom,Magnifire (Zoom-in)
+5,,PAN,
+6,,Image Slice Sync,
+7,Lines ,Reference Lines,
+8,,Crosshairs,
+9,Change View,ICON,"Rotate Right, Flip Horizontal, Reset View"
+10,Layout,,"Common(1,2,4), custom"
+11,Window Level,Window level,Invert
+12,2D MPR,ICON,"Axial, Sagittal, Coronal, Acquisition"
+13,3D MPR,MPR,"Axial Primary, 3D Only"
+14,Window Preset,Windowing Icon,"Soft tissue, Lung, Liver, Bone, Brain, CT Angio"

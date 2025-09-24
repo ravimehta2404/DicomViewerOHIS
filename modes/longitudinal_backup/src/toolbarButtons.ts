@@ -1,5 +1,4 @@
-// type import removed to avoid path resolution issues in local lint
-import { defaults } from '@ohif/core';
+import type { Button } from '@ohif/core/types';
 
 import { EVENTS } from '@cornerstonejs/core';
 import { ViewportGridService } from '@ohif/core';
@@ -20,7 +19,7 @@ export const setToolActiveToolbar = {
   },
 };
 
-const toolbarButtons = [
+const toolbarButtons: Button[] = [
   // sections
   {
     id: 'MeasurementTools',
@@ -31,34 +30,6 @@ const toolbarButtons = [
   },
   {
     id: 'MoreTools',
-    uiType: 'ohif.toolButtonList',
-    props: {
-      buttonSection: true,
-    },
-  },
-  {
-    id: 'ZoomGroup',
-    uiType: 'ohif.toolButtonList',
-    props: {
-      buttonSection: true,
-    },
-  },
-  {
-    id: 'WindowLevelGroup',
-    uiType: 'ohif.toolButtonList',
-    props: {
-      buttonSection: true,
-    },
-  },
-  {
-    id: 'MPRGroup',
-    uiType: 'ohif.toolButtonList',
-    props: {
-      buttonSection: true,
-    },
-  },
-  {
-    id: 'WindowPreset',
     uiType: 'ohif.toolButtonList',
     props: {
       buttonSection: true,
@@ -605,76 +576,6 @@ const toolbarButtons = [
     },
   },
   {
-    id: 'Soft tissue',
-    uiType: 'ohif.toolButton',
-    props: {
-      title: 'Soft tissue',
-      commands: [
-        {
-          commandName: 'setWindowLevel',
-          commandOptions: { ...defaults.windowLevelPresets[1] },
-          context: 'CORNERSTONE',
-        },
-      ],
-    },
-  },
-  {
-    id: 'Lung',
-    uiType: 'ohif.toolButton',
-    props: {
-      title: 'Lung',
-      commands: [
-        {
-          commandName: 'setWindowLevel',
-          commandOptions: { ...defaults.windowLevelPresets[2] },
-          context: 'CORNERSTONE',
-        },
-      ],
-    },
-  },
-  {
-    id: 'Liver',
-    uiType: 'ohif.toolButton',
-    props: {
-      title: 'Liver',
-      commands: [
-        {
-          commandName: 'setWindowLevel',
-          commandOptions: { ...defaults.windowLevelPresets[3] },
-          context: 'CORNERSTONE',
-        },
-      ],
-    },
-  },
-  {
-    id: 'Bone',
-    uiType: 'ohif.toolButton',
-    props: {
-      title: 'Bone',
-      commands: [
-        {
-          commandName: 'setWindowLevel',
-          commandOptions: { ...defaults.windowLevelPresets[4] },
-          context: 'CORNERSTONE',
-        },
-      ],
-    },
-  },
-  {
-    id: 'Brain',
-    uiType: 'ohif.toolButton',
-    props: {
-      title: 'Brain',
-      commands: [
-        {
-          commandName: 'setWindowLevel',
-          commandOptions: { ...defaults.windowLevelPresets[5] },
-          context: 'CORNERSTONE',
-        },
-      ],
-    },
-  },
-  {
     id: 'Pan',
     uiType: 'ohif.toolButton',
     props: {
@@ -708,54 +609,6 @@ const toolbarButtons = [
         name: 'evaluate.cornerstoneTool',
         disabledText: 'Select a 3D viewport to enable this tool',
       },
-    },
-  },
-  {
-    id: 'MPR',
-    uiType: 'ohif.toolButton',
-    props: {
-      icon: 'icon-mpr',
-      label: 'MPR',
-      tooltip: 'MPR',
-      commands: {
-        commandName: 'toggleHangingProtocol',
-        commandOptions: {
-          protocolId: 'mpr',
-        },
-      },
-      evaluate: 'evaluate.displaySetIsReconstructable',
-    },
-  },
-  {
-    id: 'AxialPrimary',
-    uiType: 'ohif.toolButton',
-    props: {
-      icon: 'layout-advanced-axial-primary',
-      label: 'Axial Primary',
-      tooltip: 'Axial Primary',
-      commands: {
-        commandName: 'toggleHangingProtocol',
-        commandOptions: {
-          protocolId: 'primaryAxial',
-        },
-      },
-      evaluate: 'evaluate.displaySetIsReconstructable',
-    },
-  },
-  {
-    id: 'Only3D',
-    uiType: 'ohif.toolButton',
-    props: {
-      icon: 'layout-advanced-3d-main',
-      label: '3D Only',
-      tooltip: '3D Only',
-      commands: {
-        commandName: 'toggleHangingProtocol',
-        commandOptions: {
-          protocolId: 'main3D',
-        },
-      },
-      evaluate: 'evaluate.displaySetIsReconstructable',
     },
   },
   {

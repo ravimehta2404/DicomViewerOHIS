@@ -82,9 +82,6 @@ function modeFactory({ modeConfiguration }) {
      * Lifecycle hooks
      */
     onModeEnter: function ({ servicesManager, extensionManager, commandsManager }: withAppTypes) {
-      // Debug: verify longitudinal mode loads
-      // eslint-disable-next-line no-console
-      console.info('[longitudinal] onModeEnter');
       const { measurementService, toolbarService, toolGroupService, customizationService } =
         servicesManager.services;
 
@@ -95,47 +92,31 @@ function modeFactory({ modeConfiguration }) {
 
       toolbarService.register(toolbarButtons);
       toolbarService.updateSection(toolbarService.sections.primary, [
-        // measurement
-        'Length',
-        'Angle',
-        'EllipticalROI',
         'MeasurementTools',
-
-        // probe
-        'Probe',
-
-        // stack scroll (default on/visible)
         'StackScroll',
-
-        // zoom
+        'StackScroll',
+        'StackScroll',
+        'StackScroll',
+        'StackScroll',
+        'StackScroll',
         'Zoom',
-        'ZoomGroup',
-
-        // pan
+        'StackScroll',
+        'StackScroll',
+        'StackScroll',
+        'StackScroll',
+        'StackScroll',
+        'Zoom',
+        'StackScroll',
+        'StackScroll',
+        'StackScroll',
+        'Zoom',
         'Pan',
-
-        // sync & lines
-        'ImageSliceSync',
-        'ReferenceLines',
-        'Crosshairs',
-
-        // change view (dropdown)
-        'MoreTools',
-
-        // layout
+        'TrackballRotate',
+        'WindowLevel',
+        'Capture',
         'Layout',
-
-        // window level
-        'WindowLevelGroup',
-
-        // 2D MPR
-        'orientationMenu',
-
-        // 3D MPR
-        'MPRGroup',
-
-        // window presets
-        'WindowPreset',
+        'Crosshairs',
+        'MoreTools',
       ]);
 
       toolbarService.updateSection(toolbarService.sections.viewportActionMenu.topLeft, [
@@ -166,8 +147,7 @@ function modeFactory({ modeConfiguration }) {
       ]);
 
       toolbarService.updateSection('MeasurementTools', [
-        'Angle',
-        'CobbAngle',
+        'Length',
         'Bidirectional',
         'ArrowAnnotate',
         'EllipticalROI',
@@ -178,20 +158,25 @@ function modeFactory({ modeConfiguration }) {
         'LivewireContour',
       ]);
 
-      toolbarService.updateSection('MoreTools', ['rotate-right', 'flipHorizontal', 'Reset']);
-
-      toolbarService.updateSection('ZoomGroup', ['Magnify']);
-
-      toolbarService.updateSection('WindowLevelGroup', ['WindowLevel', 'invert']);
-
-      toolbarService.updateSection('MPRGroup', ['MPR', 'AxialPrimary', 'Only3D']);
-
-      toolbarService.updateSection('WindowPreset', [
-        'Soft tissue',
-        'Lung',
-        'Liver',
-        'Bone',
-        'Brain',
+      toolbarService.updateSection('MoreTools', [
+        'Reset',
+        'rotate-right',
+        'flipHorizontal',
+        'ImageSliceSync',
+        'ReferenceLines',
+        'ImageOverlayViewer',
+        'StackScroll',
+        'invert',
+        'Probe',
+        'Cine',
+        'Angle',
+        'CobbAngle',
+        'Magnify',
+        'CalibrationLine',
+        'TagBrowser',
+        'AdvancedMagnify',
+        'UltrasoundDirectionalTool',
+        'WindowLevelRegion',
       ]);
 
       customizationService.setCustomizations({
