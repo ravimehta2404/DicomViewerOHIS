@@ -93,11 +93,12 @@ function modeFactory({ modeConfiguration }) {
       // Init Default and SR ToolGroups
       initToolGroups(extensionManager, toolGroupService, commandsManager);
 
-      toolbarService.register(toolbarButtons);
+      // Register toolbar buttons (skip strict typing)
+      toolbarService.register(toolbarButtons as unknown as never);
       toolbarService.updateSection(toolbarService.sections.primary, [
         // measurement
         'Length',
-        'Angle',
+        // 'Angle',
         'EllipticalROI',
         'MeasurementTools',
 
@@ -135,7 +136,7 @@ function modeFactory({ modeConfiguration }) {
         'MPRGroup',
 
         // window presets
-        'WindowPreset',
+        'WindowPresets',
       ]);
 
       toolbarService.updateSection(toolbarService.sections.viewportActionMenu.topLeft, [
@@ -186,13 +187,23 @@ function modeFactory({ modeConfiguration }) {
 
       toolbarService.updateSection('MPRGroup', ['MPR', 'AxialPrimary', 'Only3D']);
 
-      toolbarService.updateSection('WindowPreset', [
+      toolbarService.updateSection('WindowPresets', [
         'Soft tissue',
         'Lung',
         'Liver',
         'Bone',
         'Brain',
       ]);
+
+      // Make StackScroll active by default for better UX (force command)
+      commandsManager.runCommand(
+        'setToolActiveToolbar',
+        {
+          toolGroupIds: ['default', 'mpr', 'SRToolGroup', 'volume3d'],
+          toolName: 'StackScroll',
+        },
+        'CORNERSTONE'
+      );
 
       customizationService.setCustomizations({
         'panelSegmentation.disableEditing': {

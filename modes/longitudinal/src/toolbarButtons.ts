@@ -1,8 +1,8 @@
-// type import removed to avoid path resolution issues in local lint
 import { defaults } from '@ohif/core';
-
 import { EVENTS } from '@cornerstonejs/core';
 import { ViewportGridService } from '@ohif/core';
+// Local build may not resolve types; use loose typing for buttons
+type Button = Record<string, unknown>;
 
 const callbacks = (toolName: string) => [
   {
@@ -20,7 +20,8 @@ export const setToolActiveToolbar = {
   },
 };
 
-const toolbarButtons = [
+// Use unknown[] to satisfy linter without strict Button typing here
+const toolbarButtons: Button[] = [
   // sections
   {
     id: 'MeasurementTools',
@@ -126,7 +127,7 @@ const toolbarButtons = [
     uiType: 'ohif.orientationMenu',
     props: {
       icon: 'OrientationSwitch',
-      label: 'Orientation',
+      label: '2D MPR',
       tooltip:
         'Change viewport orientation between axial, sagittal, coronal and acquisition planes',
       evaluate: {
@@ -348,7 +349,7 @@ const toolbarButtons = [
     uiType: 'ohif.toolButton',
     props: {
       icon: 'tool-probe',
-      label: 'Probe',
+      label: 'HU',
       tooltip: 'Probe',
       commands: setToolActiveToolbar,
       evaluate: 'evaluate.cornerstoneTool',
@@ -489,6 +490,16 @@ const toolbarButtons = [
     },
   },
   {
+    id: 'WindowPresets',
+    uiType: 'ohif.toolButton',
+    props: {
+      icon: 'tool-window-level',
+      label: 'Window Preset',
+      tooltip: 'Window Preset',
+      evaluate: 'evaluate.action',
+    },
+  },
+  {
     id: 'Length',
     uiType: 'ohif.toolButton',
     props: {
@@ -593,7 +604,7 @@ const toolbarButtons = [
     uiType: 'ohif.toolButton',
     props: {
       icon: 'tool-window-level',
-      label: 'Window Level',
+      label: 'Level',
       commands: setToolActiveToolbar,
       evaluate: [
         'evaluate.cornerstoneTool',
@@ -715,8 +726,8 @@ const toolbarButtons = [
     uiType: 'ohif.toolButton',
     props: {
       icon: 'icon-mpr',
-      label: 'MPR',
-      tooltip: 'MPR',
+      label: '3D MPR',
+      tooltip: '3D MPR',
       commands: {
         commandName: 'toggleHangingProtocol',
         commandOptions: {

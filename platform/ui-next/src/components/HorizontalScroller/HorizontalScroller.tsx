@@ -87,7 +87,7 @@ export function HorizontalScroller({
     <div className={['relative w-full', className].filter(Boolean).join(' ')}>
       <div
         ref={scrollContainerRef}
-        className="scrollbar-hide flex items-center gap-2 overflow-x-auto px-4 md:px-8"
+        className="scrollbar-hide flex items-center gap-3 overflow-x-auto px-4 md:px-8"
         onWheel={handleWheel}
         style={{
           scrollbarWidth: 'none',

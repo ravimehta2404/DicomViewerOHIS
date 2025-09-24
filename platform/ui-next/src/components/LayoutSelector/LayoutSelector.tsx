@@ -118,7 +118,7 @@ type TriggerProps = {
 const Trigger = ({
   children,
   className,
-  tooltip = 'Change layout',
+  tooltip = 'Layout',
   disabled = false,
   disabledText,
 }: TriggerProps) => {

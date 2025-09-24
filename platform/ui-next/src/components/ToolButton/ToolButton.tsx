@@ -13,15 +13,15 @@ const disabledClasses =
 
 const sizeClasses = {
   default: {
-    buttonSizeClass: 'w-10 h-10',
+    buttonSizeClass: 'min-w-[48px] h-12 px-2',
     iconSizeClass: 'h-7 w-7',
   },
   small: {
-    buttonSizeClass: 'w-8 h-8',
+    buttonSizeClass: 'min-w-[40px] h-10 px-2',
     iconSizeClass: 'h-6 w-6',
   },
   tiny: {
-    buttonSizeClass: 'w-6 h-6',
+    buttonSizeClass: 'min-w-[32px] h-8 px-1.5',
     iconSizeClass: 'h-4 w-4',
   },
 };
@@ -62,6 +62,9 @@ function ToolButton(props: ToolButtonProps) {
 
   const buttonClasses = cn(
     baseClasses,
+    'px-4',
+    'w-auto',
+    'btnCustomCls',
     buttonSizeClass,
     disabled ? disabledClasses : isActive ? activeClasses : defaultClasses,
     className
@@ -88,12 +91,12 @@ function ToolButton(props: ToolButtonProps) {
         >
           <Button
             className={buttonClasses}
+            style={{ minWidth: '65px' }}
             onClick={() => {
               if (!disabled) {
                 onInteraction?.({ itemId: id, commands });
               }
             }}
-            style={{ minWidth: 'auto', padding: '28px' }}
             variant="ghost"
             size="icon"
             aria-label={defaultTooltip}

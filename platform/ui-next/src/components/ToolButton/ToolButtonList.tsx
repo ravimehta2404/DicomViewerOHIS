@@ -24,7 +24,7 @@ const ToolButtonList = React.forwardRef<HTMLDivElement, ToolButtonListProps>(
     return (
       <div
         ref={ref}
-        className={cn('flex items-center', className)}
+        className={cn('flex items-center gap-3', className)}
         {...props}
       >
         {children}

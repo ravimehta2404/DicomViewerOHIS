@@ -54,6 +54,7 @@ function Header({
     }
   };
 
+  PatientInfo = null;
   return (
     <IconPresentationProvider
       size="large"
@@ -90,7 +91,9 @@ function Header({
             {/* Main toolbar section - takes available space */}
             <div className="min-w-0 flex-1 px-4">
               <div className="flex items-center justify-center">
-                <div className="w-full max-w-none">{children}</div>
+                <div className="w-full max-w-none">
+                  <div className="flex h-[56px] items-center">{children}</div>
+                </div>
               </div>
             </div>
             {/* Right section with controls */}
